@@ -8,8 +8,8 @@ import (
 
 // Store provides all functions to execute db queries and transactions
 type Store struct {
-	 *Queries
-	db *sql.DB
+	 *Queries // kế thừa tất cả hàm query do sqlc tạo ra như list, getaccounts,...
+	db *sql.DB // giữ conection tới db dùng mở transaction, begin, commit,..
 }
 
 func NewStore(db *sql.DB) *Store {
