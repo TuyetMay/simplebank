@@ -16,6 +16,9 @@ func NewServer(store *db.Store) *Server{
 	router := gin.Default() // tạo router mặc định của gin framework
 
 	router.POST("/accounts", server.createAccount)
+	router.GET("/accounts/:id", server.getAccount)
+	router.GET("/accounts", server.ListAccount)
+
 
 	server.router = router
 	return server
@@ -31,3 +34,4 @@ func errResponse (err error) gin.H{
 	return gin.H{"error": err.Error()}
 
 }
+
