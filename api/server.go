@@ -1,8 +1,10 @@
 package api 
 
 import(
+	"github.com/gin-gonic/gin/binding"
 	"github.com/gin-gonic/gin"
 	db "github.com/techschool/simplebank/db/sqlc"
+	"github.com/go-playground/validator/v10"
 )
 //Server serves all HTTP requests for our bank service : chịu trách nhiệm nhận, xử lý và trả lời các request
 type Server struct{
@@ -11,21 +13,23 @@ type Server struct{
 }
 
 // NewServer creates a new HTTP server ans set up routing
-func NewServer(store db.Store) *Server{
-	server := &Server{store: store}
-	router := gin.Default() // tạo router mặc định của gin framework
+func NewServer(store db.Store) *Server {
+    server := &Server{store: store}
+    router := gin.Default()
 
-	router.POST("/accounts", server.createAccount)
-	router.GET("/accounts/:id", server.getAccount)
-	router.GET("/accounts", server.ListAccount)
+    if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+        v.RegisterValidation("currency", validCurrency)
+    }
 
-	router.POST("/transfers", server.createTransfer)
+    router.POST("/accounts", server.createAccount)
+    router.GET("/accounts/:id", server.getAccount)
+    router.GET("/accounts", server.ListAccount)
+    router.POST("/transfers", server.createTransfer)
 
-
-	server.router = router
-	return server
-
+    server.router = router
+    return server
 }
+
 
 // take an address as input and return error. Start runs the http server on a specific address
 func (server *Server) Start ( address string) error{

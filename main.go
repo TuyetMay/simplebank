@@ -10,15 +10,6 @@ import (
     db "github.com/techschool/simplebank/db/sqlc"
 )
 
-const (
-    dbDriver      = "postgres"
-    dbSource      = "postgresql://user_name:pass_word@localhost:5432/simple_bank?sslmode=disable"
-    serverAddress = "0.0.0.0:"
-    
-
-)
-
-
 func main() {
 
     config, err := util.LoadConfig(".")
@@ -33,6 +24,11 @@ func main() {
         log.Fatal("cannot connect to db: ", err)
     }
 
+    // Test connection
+    if err = conn.Ping(); err != nil {
+        log.Fatal("cannot ping db: ", err)
+    }
+
     // 2. Tạo store từ sqlc (Queries)
     store := db.NewStore(conn)
 
@@ -40,6 +36,7 @@ func main() {
     server := api.NewServer(store)
 
     // 4. Start server
+    log.Printf("Starting server on %s", config.ServerAddress)
     err = server.Start(config.ServerAddress)
     if err != nil {
         log.Fatal("cannot start server: ", err)
