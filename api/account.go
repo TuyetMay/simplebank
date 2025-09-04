@@ -10,7 +10,7 @@ import (
 
 type createAccountRequest struct{
 	Owner    string `json:"owner" binding:"required"`
-	Currency string `json:"currency" binding:"required,oneof=USD EUR CAD"`
+	Currency string `json:"currency" binding:"required,oneof=USD EUR "`
 }
 
 func(server *Server) createAccount(ctx *gin.Context){
@@ -37,7 +37,7 @@ func(server *Server) createAccount(ctx *gin.Context){
 }
 
 type getAccountRequest struct {
-	ID int64 `uri:"id" binding: "required,min=1"` // id này là trường bắt buộc, số nhỏ nhất là 1
+    ID int64 `uri:"id" binding:"required,min=1"` // Correct
 }
 
 func (server *Server) getAccount(ctx *gin.Context){ //gin.Context chứ tất cả thông tin về request,response,...
@@ -62,13 +62,14 @@ func (server *Server) getAccount(ctx *gin.Context){ //gin.Context chứ tất c�
 
 type listAccountRequest struct{
 	PageID int32 `form:"page_id" binding:"required,min=1"`
-	PageSize int32 `form:"page_size" binding:"required, min=5,max=10"`
+	PageSize int32 `form:"page_size" binding:"required,min=5,max=10"` // Fixed: removed space after required
 }
 
 func(server *Server) ListAccount(ctx *gin.Context){
 	var req listAccountRequest
 	if err := ctx.ShouldBindQuery(&req); err != nil{
 		ctx.JSON(http.StatusBadRequest, errResponse(err))
+		return // Fixed: added missing return
 	}
 
 	arg := db.ListAccountsParams{

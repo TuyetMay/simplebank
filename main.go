@@ -3,6 +3,7 @@ package main
 import (
     "database/sql"
     "log"
+    "github.com/techschool/simplebank/util"
 
     _ "github.com/lib/pq" // PostgreSQL driver
     "github.com/techschool/simplebank/api"
@@ -17,9 +18,17 @@ const (
 
 )
 
+
 func main() {
+
+    config, err := util.LoadConfig(".")
+    if err != nil {
+        log.Fatal("cannot load config:", err)
+    }
+
+
     // 1. Kết nối database
-    conn, err := sql.Open(dbDriver, dbSource)
+    conn, err := sql.Open(config.DBDriver, config.DBSource)
     if err != nil {
         log.Fatal("cannot connect to db: ", err)
     }
@@ -31,7 +40,7 @@ func main() {
     server := api.NewServer(store)
 
     // 4. Start server
-    err = server.Start(serverAddress)
+    err = server.Start(config.ServerAddress)
     if err != nil {
         log.Fatal("cannot start server: ", err)
     }

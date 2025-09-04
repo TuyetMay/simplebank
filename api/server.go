@@ -6,18 +6,20 @@ import(
 )
 //Server serves all HTTP requests for our bank service : chịu trách nhiệm nhận, xử lý và trả lời các request
 type Server struct{
-	store *db.Store
+	store db.Store
 	router *gin.Engine
 }
 
 // NewServer creates a new HTTP server ans set up routing
-func NewServer(store *db.Store) *Server{
+func NewServer(store db.Store) *Server{
 	server := &Server{store: store}
 	router := gin.Default() // tạo router mặc định của gin framework
 
 	router.POST("/accounts", server.createAccount)
 	router.GET("/accounts/:id", server.getAccount)
 	router.GET("/accounts", server.ListAccount)
+
+	router.POST("/transfers", server.createTransfer)
 
 
 	server.router = router
