@@ -5,15 +5,16 @@ import (
 	"context"
 	"testing"
 	"github.com/stretchr/testify/require"
-	"github.com/techschool/simplebank/util"
-	"github.com/jackc/pgx/v5/pgtype"
-	
+	"github.com/techschool/simplebank/util"	
 )
 
 func createRandomUser(t *testing.T) User { // hàm nhận tham số đầu vào t kiểu dữ liệu là *tetsting.T và trả về kiểu dữ liệu Account
+	hashedPassword, err := util.HashPassword(util.RandomString(6))
+	require.NoError(t,err)
+
 	arg := CreateUserParams{
 		Username:   util.RandomOwner(),
-		HashedPassword:  "secret",
+		HashedPassword:  hashedPassword,
 		FullName: util.RandomOwner(),
 		Email:    util.RandomEmail(),
 	}
